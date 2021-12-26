@@ -4,7 +4,7 @@ import yfinance as yf
 from datetime import date
 from plotly import graph_objs as go
 
-st.title("Technical Analyze Dashboard V0.1.")
+st.title("Technical Analyze Dashboard.")
 
 stocks = st.text_input('Pick a ticker', 'AAPL')
 start = st.date_input("Start date")
