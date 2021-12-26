@@ -1,10 +1,11 @@
 import pandas as pd
-
 import streamlit as st
 import yfinance as yf
 from datetime import date
 from plotly import graph_objs as go
-
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+from statsmodels.tsa.arima.model import ARIMA
+import statsmodels.api as sm
 import matplotlib as plt
 
 # from sklearn.linear_model import LinearRegression
@@ -14,12 +15,24 @@ import matplotlib as plt
 start = "2010-01-01"
 today = date.today().strftime("%Y-%m-%d")
 
-st.title("Forecast Stock Price")
+st.title("Forecast Stock Price Demo Version")
 
 stocks = ("AAPL", "GOOG", "MSFT", "TSLA", "SPY")
 selected_stocks = st.selectbox("Выбери акцию для построения прогноза ", stocks)
 
-n_years = st.slider("Период предсказания: ", 1, 4)
+per = ("3", "5", "8", "13", "21", "34")
+selected_per = st.selectbox("Выбери период МА для построения прогноза ", per)
+
+per_p = ("1", "2", "3", "5", "10", "15", "25", "55")
+selected_per_p = st.selectbox("number of lag observations ", per_p)
+
+per_d = ("1", "2", "3", "4", "5", "6")
+selected_per_d = st.selectbox("number of times ", per_d)
+
+per_q = ("1", "2", "3", "4", "10", "15", "25", "55")
+selected_per_q = st.selectbox("size of the moving average ", per_q)
+
+n_years = st.slider("Период предсказания: ", 5, 30)
 period = n_years * 365
 
 
@@ -35,8 +48,8 @@ df = load_data(selected_stocks)
 
 data_load_state.text("Load ...done! ")
 
-st.header('Raw Date')
-st.write(df.tail())
+# st.header('Raw Date')
+# st.write(df.tail())
 
 
 def plot_paint():
@@ -48,24 +61,33 @@ def plot_paint():
     st.plotly_chart(fig)
 
 
-plot_paint()
+# plot_paint()
 
-# Calculates Moving Average (5) base on stock  price.
+# Calculates Moving Average  base on stock  price.
 
-st.header('Calculates Moving Average (13) base on stock  price.')
-df['ma5'] = df['Close'].rolling(13).mean()
-st.line_chart(df['ma5'])
+st.header('Calculates Moving Average (%s) base on stock  price.' % (int(selected_per)))
+df['ma'] = df['Close'].rolling(int(selected_per)).mean()
+# st.line_chart(df['ma'])
 
-# st.write(df.tail(3))
-
-train_data = df.iloc[5:2700, 7]
-
-# st.write(train_data)
-# st.line_chart(train_data)
-
-diff_data = train_data.diff()
+diff_data = df.iloc[30:, 7].diff()
 diff_data.dropna(inplace=True)
 
-st.header('Calculates the difference of a MA(13) dataframe previous element.')
-st.line_chart(diff_data)
+# st.header('Calculates the difference of a MA(%s) with previous element.' % (int(selected_per)))
+# st.line_chart(diff_data)
+
+# Prepare Forecast (ACF and PACF)
+# st.header('Autocorrelation')
+# acf = plot_acf(diff_data, lags=35, use_vlines=True, title='ACF')
+# acf.legend([selected_stocks], loc="upper right", fontsize="small", framealpha=1, edgecolor="black", shadow=None)
+# st.write(acf)
+# pacf = plot_pacf(diff_data, lags=35, use_vlines=True, title='PACF')
+# pacf.legend([selected_stocks], loc="upper right", fontsize="small", framealpha=1, edgecolor="black", shadow=None)
+# st.write(pacf)
+
 # Forecast
+train_data = df.iloc[35:2800, 7]
+model = ARIMA(train_data, order=(int(selected_per_p), int(selected_per_d), int(selected_per_q)))
+arima = model.fit()
+predict_data = arima.predict(2080, 2180, dynamic=True, type='levels')
+stock_concat = pd.concat([df['ma'], predict_data], axis=1, keys=['origin', 'predict'])
+st.line_chart(stock_concat)
