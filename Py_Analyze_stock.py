@@ -17,10 +17,10 @@ today = date.today().strftime("%Y-%m-%d")
 # stocks = ("AAPL", "GOOG", "MSFT", "TSLA", "SPY")
 # selected_stocks = st.selectbox("Pick a stock ", stocks)
 
-per_ma = ("3", "5", "8", "13", "21", "34")
+per_ma = ("3", "5", "8", "13", "21", "34", "55")
 selected_ma = st.selectbox("Period first MA ", per_ma)
 
-per_ma2 = ("5", "8", "13", "21", "34", "55")
+per_ma2 = ("5", "8", "13", "21", "34", "55", "200")
 selected_ma2 = st.selectbox("Period second MA ", per_ma2)
 
 
