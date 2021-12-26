@@ -26,8 +26,8 @@ selected_ma2 = st.selectbox("Period second MA ", per_ma2)
 #     df.reset_index(inplace=True)
 #     return df
 
-def relative(df):
-    rel = df.pct_change()
+def relative(data):
+    rel = data.pct_change()
     cumret = (1 + rel).cumprod() - 1
     cumret = cumret.fillna(0)
     return cumret
@@ -36,18 +36,18 @@ def relative(df):
 # data_load_state = st.text("Wait ...loading")
 # df = load_data(selected_stocks)
 if len(stocks) > 0:
-    df = relative(yf.download(stocks, start, today))
-    df.reset_index(inplace=True)
+    data = relative(yf.download(stocks, start, today))
+    data.reset_index(inplace=True)
 
 # data_load_state.text("Load ...done! ")
 
 st.header('Raw Date')
-st.write(df.tail())
+st.write(data.tail())
 
 
 def plot_paint():
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=df['Date'], y=df['Close']))
+    fig.add_trace(go.Scatter(x=data['Date'], y=data['Close']))
     fig.layout.update(title='Time Series Data', xaxis_rangeslider_visible=True)
 
     st.plotly_chart(fig, use_container_width=True)
@@ -57,15 +57,15 @@ plot_paint()
 
 # Calculates Moving Average  base on stock  price.
 st.header('Calculates Moving Average  on stock  price.')
-df['ma'] = df['Close'].rolling(int(selected_ma)).mean()
-df['ma2'] = df['Close'].rolling(int(selected_ma2)).mean()
+data['ma'] = data['Close'].rolling(int(selected_ma)).mean()
+data['ma2'] = data['Close'].rolling(int(selected_ma2)).mean()
 
 ma1 = str(selected_ma)
 ma2 = str(selected_ma2)
 
-df['Date'] = pd.to_datetime(df['Date'])
-df.set_index('Date', inplace=True)
-stock_concat = pd.concat([df['ma'], df['ma2'], df['Close']], axis=1, keys=['Moving average - %s ' % int(selected_ma),
+data['Date'] = pd.to_datetime(data['Date'])
+data.set_index('Date', inplace=True)
+stock_concat = pd.concat([data['ma'], data['ma2'], data['Close']], axis=1, keys=['Moving average - %s ' % int(selected_ma),
                                                                            'Moving average - %s ' % int(selected_ma2),
                                                                            'Close price'
                                                                           ])
