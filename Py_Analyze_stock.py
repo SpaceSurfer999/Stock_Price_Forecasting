@@ -4,10 +4,6 @@ import yfinance as yf
 from datetime import date
 from plotly import graph_objs as go
 
-# from sklearn.linear_model import LinearRegression
-# from sklearn.model_selection import train_test_split
-from yfinance import ticker
-
 st.title("Technical Analyze Dashboard.")
 
 stocks = st.text_input('Pick a ticker')
