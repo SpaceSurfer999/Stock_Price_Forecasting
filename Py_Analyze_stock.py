@@ -4,14 +4,11 @@ import yfinance as yf
 from datetime import date
 from plotly import graph_objs as go
 
-st.title("Technical Analyze Dashboard.")
+st.title("Technical Analyze Dashboard V0.1.")
 
 stocks = st.text_input('Pick a ticker', 'AAPL')
 start = st.date_input("Start date")
 today = date.today().strftime("%Y-%m-%d")
-
-# stocks = ("AAPL", "GOOG", "MSFT", "TSLA", "SPY")
-# selected_stocks = st.selectbox("Pick a stock ", stocks)
 
 per_ma = ("3", "5", "8", "13", "21", "34", "55")
 selected_ma = st.selectbox("Period first MA ", per_ma)
