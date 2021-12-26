@@ -8,13 +8,14 @@ from plotly import graph_objs as go
 # from sklearn.model_selection import train_test_split
 from yfinance import ticker
 
-st.title("Forecast Stock Price Demo Version")
+st.title("Technical Analyze Dashboard.")
 
-start = st.date_input("Pick a start date")
+stocks = st.text_input('Pick a ticker')
+start = st.date_input("Start date")
 today = date.today().strftime("%Y-%m-%d")
 
-stocks = ("AAPL", "GOOG", "MSFT", "TSLA", "SPY")
-selected_stocks = st.selectbox("Pick a stock ", stocks)
+# stocks = ("AAPL", "GOOG", "MSFT", "TSLA", "SPY")
+# selected_stocks = st.selectbox("Pick a stock ", stocks)
 
 per_ma = ("3", "5", "8", "13", "21", "34")
 selected_ma = st.selectbox("Period first MA ", per_ma)
@@ -38,8 +39,8 @@ def relative(df):
 
 # data_load_state = st.text("Wait ...loading")
 # df = load_data(selected_stocks)
-if len(selected_stocks) > 0:
-    df = relative(yf.download(selected_stocks, start, today))
+if len(stocks) > 0:
+    df = relative(yf.download(stocks, start, today))
     df.reset_index(inplace=True)
 
 # data_load_state.text("Load ...done! ")
@@ -68,9 +69,9 @@ ma2 = str(selected_ma2)
 
 df['Date'] = pd.to_datetime(df['Date'])
 df.set_index('Date', inplace=True)
-stock_concat = pd.concat([df['ma'], df['ma2'], df['Close']], axis=1, keys=['Moving average %s ' % int(selected_ma),
-                                                                           'Moving average %s ' % int(selected_ma2),
+stock_concat = pd.concat([df['ma'], df['ma2'], df['Close']], axis=1, keys=['Moving average - %s ' % int(selected_ma),
+                                                                           'Moving average - %s ' % int(selected_ma2),
                                                                            'Close price'
                                                                           ])
 
-st.line_chart(stock_concat)
+st.line_chart(stock_concat, use_container_width=True)
