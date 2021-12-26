@@ -6,7 +6,7 @@ from plotly import graph_objs as go
 
 st.title("Technical Analyze Dashboard.")
 
-stocks = st.text_input('Pick a ticker')
+stocks = st.text_input('Pick a ticker', 'AAPL')
 start = st.date_input("Start date")
 today = date.today().strftime("%Y-%m-%d")
 
